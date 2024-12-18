@@ -1,28 +1,28 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
+const connectDB = require('./models/mongoDB');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Connect to Database
+connectDB();
+
 // Middleware
 app.use(bodyParser.json());
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log('MongoDB connected'))
-.catch((err) => console.log('Error connecting to MongoDB:', err));
+// Routes
+app.use('/api/sales', require('./routes/sales.route'));
+app.use('/api/expenses', require('./routes/expense.route'));
+app.use('/api/inventory', require('./routes/inventory.route'));
 
-// Test Route
+// Default Route
 app.get('/', (req, res) => {
-  res.send('BakeBox Backend is running!');
+    res.send('BakeBox Backend is running!');
 });
 
 // Start Server
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Server is running on http://localhost:${PORT}`);
 });
